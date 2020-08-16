@@ -9,17 +9,16 @@ const app = express();
 // Cors Configuration
 app.use(cors());
 
+// COnfiguración y parseo del body
+app.use(express.json());
+
 // DataBase
 dbConnection();
 
 // routes
-app.get('/', (req, res) => {
-    res.json({
-        ok: true,
-        msg: 'hola mundo'
-    });
-});
+app.use('/api/users', require('./routes/usuario'));
 
+// Se levanta el servidor
 app.listen(process.env.PORT, () => {
-    console.log(`servidor correindo por el puerto ${process.env.PORT}`);
+    console.log(`Server on port ${process.env.PORT}`);
 });
