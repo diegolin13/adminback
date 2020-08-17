@@ -29,9 +29,9 @@ const UserSchema = Schema({
     }
 });
 
-// Metodo para que visualmente obtengamos uid en lugar _id que entrega por defecto mongoose
+// Metodo para que visualmente obtengamos uid en lugar _id que entrega por defecto mongoose. EN la respuesta de la peticiòn ahora no aparecerá __v, password, y el _id aparecerá como uid
 UserSchema.method('toJSON', function() {
-    const { __v, _id, ...object } = this.toObject();
+    const { __v, _id, password, ...object } = this.toObject();
     object.uid = _id;
     return object;
 })

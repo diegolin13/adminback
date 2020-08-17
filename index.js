@@ -17,6 +17,7 @@ dbConnection();
 
 // routes
 app.use('/api/users', require('./routes/usuario'));
+app.use('/api/login', require('./routes/auth'));
 
 // Se levanta el servidor
 app.listen(process.env.PORT, () => {
