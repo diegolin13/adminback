@@ -18,6 +18,10 @@ dbConnection();
 // routes
 app.use('/api/users', require('./routes/usuario'));
 app.use('/api/login', require('./routes/auth'));
+app.use('/api/hospital', require('./routes/hospital'));
+app.use('/api/medico', require('./routes/medico'));
+app.use('/api/todo', require('./routes/busqueda'));
+app.use('/api/upload', require('./routes/uploads'));
 
 // Se levanta el servidor
 app.listen(process.env.PORT, () => {

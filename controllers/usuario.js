@@ -4,13 +4,24 @@ const { generarToken } = require('../helpers/jwt');
 const Usuario = require('../models/usuario');
 
 const getUsuario = async(req, res) => {
-    const usuarios = await Usuario.find({}, 'nombre email role google');
+    /* Se obtiene el parametro para indicar desde qué registro se quiere obtener la data. si no hay paramtero por defecto se asigna un cero */
+    const desde = Number(req.query.desde) || 0;
+
+    // Se ejecutan dos promessas de manera simultànea para mejorar ell performance de la app. EN la variable usuarios se guardan todos los registros encontrados por el query y en total se guarda el numero total de registros de la coleccion
+    const [usuarios, total] = await Promise.all([
+        Usuario.find({}, 'nombre email role google img')
+        .skip(desde)
+        .limit(5),
+
+        Usuario.countDocuments()
+    ]);
+
     res.json({
         ok: true,
         users: [{
             id: 123,
             usuarios,
-            uid: req.uid /* El uid viene del middleware validar-jwt.js Servira para identificar quien hizo la petición */
+            total
         }]
     });
 };
