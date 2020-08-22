@@ -22,6 +22,7 @@ app.use('/api/hospital', require('./routes/hospital'));
 app.use('/api/medico', require('./routes/medico'));
 app.use('/api/todo', require('./routes/busqueda'));
 app.use('/api/upload', require('./routes/uploads'));
+app.use('/api/drive', require('./routes/drive'));
 
 // Se levanta el servidor
 app.listen(process.env.PORT, () => {
