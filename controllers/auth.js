@@ -2,6 +2,7 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/usuario');
 const { generarToken } = require('../helpers/jwt');
+const { googleVerify } = require('../helpers/google-verify');
 
 const login = async(req, res = response) => {
     const { email, password } = req.body;
@@ -42,6 +43,47 @@ const login = async(req, res = response) => {
     }
 }
 
+const googleSignIn = async(req, res = response) => {
+    const googleToken = req.body.token;
+    try {
+        const { name, email, picture } = await googleVerify(googleToken);
+        const usuarioDB = await User.findOne({ email });
+        let usuario;
+        if (!usuarioDB) {
+            // Si no existe un usuario, se creara uno nuevo con la data proporcionada por google
+            usuario = new User({
+                nombre: name,
+                email,
+                password: '@@@',
+                img: picture,
+                google: true
+            });
+        } else {
+            // En este punto el usuario ya se había registrado pero despues opto por la autenticacion por google
+            usuario = usuarioDB;
+            usuario.google = true;
+        }
+
+        // Guardar usuario actualizado
+
+        await usuario.save();
+
+        // GEnerar jwt
+        const token = await generarToken(usuario.id);
+
+        res.json({
+            ok: true,
+            token
+        });
+    } catch (error) {
+        return res.status(401).json({
+            ok: false,
+            msg: 'El token no es válido'
+        });
+    }
+
+}
 module.exports = {
-    login
+    login,
+    googleSignIn
 }
