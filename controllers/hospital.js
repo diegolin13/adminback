@@ -10,7 +10,7 @@ const getHospital = async(req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
             msg: 'Unexpected error'
         });
@@ -37,7 +37,7 @@ const createHospital = async(req, res = response) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
             msg: 'Unexpected error'
         });
@@ -47,13 +47,32 @@ const createHospital = async(req, res = response) => {
 };
 
 const actualizarHospital = async(req, res = response) => {
+    const hospitalId = req.params.id;
+    const uid = req.uid;
     try {
+        const hospitalDB = await Hospital.findOne({ _id: hospitalId });
+        if (!hospitalDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe un hospital con el id proporcionado'
+            });
+        }
+
+        // Con ayuda del operador spread, se pueden obtener todos los campos en el body de la petición, tambien se enviara el usuario que esta haciendo la actualizacion
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid,
+        }
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate(hospitalId, cambiosHospital, { new: true });
         res.json({
             ok: true,
-            msg: 'Actualizar hospital'
+            msg: 'hospital actulizado',
+            hospital: hospitalActualizado
         });
     } catch (error) {
-        res.status(500).json({
+        console.log(error);
+        return res.status(500).json({
             ok: false,
             msg: 'Unexpected error'
         });
@@ -63,12 +82,22 @@ const actualizarHospital = async(req, res = response) => {
 
 const borrarHospital = async(req, res = response) => {
     try {
+        const hospitalId = req.params.id;
+        const hospitaldb = await Hospital.findOne({ _id: hospitalId });
+        if (!hospitaldb) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No se encontro un hospital con el id proporcionado'
+            });
+        }
+        await Hospital.findByIdAndDelete(hospitalId);
         res.json({
             ok: true,
-            msg: 'Borrar hospital'
+            msg: 'Hospital eliminado',
         });
     } catch (error) {
-        res.status(500).json({
+        console.log(error);
+        return res.status(500).json({
             ok: false,
             msg: 'Unexpected error'
         });

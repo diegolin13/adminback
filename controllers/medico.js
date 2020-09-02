@@ -45,13 +45,29 @@ const createMedico = async(req, res = response) => {
 };
 
 const actualizarMedico = async(req, res = response) => {
+    const idMedico = req.params.id;
+    const uid = req.uid;
     try {
+
+        const medicoDb = await Medico.findOne({ _id: idMedico });
+        if (!medicoDb) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No se encontró un medico con el id proporcionado'
+            });
+        }
+        const cambiosMedico = {
+            ...req.body,
+            usuario: uid
+        }
+        const medicoActualizado = await Medico.findByIdAndUpdate(idMedico, cambiosMedico, { new: true });
         res.json({
             ok: true,
-            msg: 'Actualizar Medico'
+            medico: medicoActualizado
         });
     } catch (error) {
-        res.status(500).json({
+        console.log(error);
+        return res.status(500).json({
             ok: false,
             msg: 'Unexpected error'
         });
@@ -60,13 +76,23 @@ const actualizarMedico = async(req, res = response) => {
 }
 
 const borrarMedico = async(req, res = response) => {
+    const idMedico = req.params.id;
     try {
+        const medicoDb = await Medico.findOne({ _id: idMedico });
+        if (!medicoDb) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No se encontró un medico con el id proporcionado'
+            });
+        }
+        await Medico.findOneAndDelete({ _id: medicoDb });
         res.json({
             ok: true,
-            msg: 'Borrar Medico'
+            msg: 'Medico borrado'
         });
     } catch (error) {
-        res.status(500).json({
+        console.log(error);
+        return res.status(500).json({
             ok: false,
             msg: 'Unexpected error'
         });
