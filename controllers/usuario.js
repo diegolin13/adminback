@@ -52,11 +52,9 @@ const createUser = async(req, res = response) => {
 
         res.json({
             ok: true,
-            users: [{
-                id: 123,
-                user,
-                token
-            }]
+            user,
+            token
+
         });
     } catch (error) {
         /* Se controla el error si falla la petición */

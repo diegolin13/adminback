@@ -12,7 +12,7 @@ const login = async(req, res = response) => {
         if (!usuarioDB) {
             return res.status(500).json({
                 ok: false,
-                msg: '(correo) o contraseña incorrectos'
+                msg: 'correo o contraseña incorrectos'
             });
         }
 
@@ -22,7 +22,7 @@ const login = async(req, res = response) => {
         if (!validPassword) {
             return res.status(400).json({
                 ok: false,
-                msg: 'correo o (contraseña) incorrectos'
+                msg: 'correo o contraseña incorrectos'
             });
         }
 
